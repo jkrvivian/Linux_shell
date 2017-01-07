@@ -8,8 +8,8 @@
 * `$ ./shell` to run
 
 ## Function
-* Can perform all the commands in `$PATH`
-* Can perform I/O redirection(`<` `>`) and pipe(`|`)
+* Support all the commands in `$PATH`
+* Support I/O redirection(`<` `>`) and pipe(`|`)
 ### Self-implement commands
 * `exit`
   * terminate the shell program 
@@ -17,6 +17,8 @@
   * change directory
 * `history`
   * show all the history since you start this program
-
+* recall history command by pressing up or down arrow
+  * implement with Non-blocking I/O
+  
 ## TODO
 * I/O redirection bug fix
