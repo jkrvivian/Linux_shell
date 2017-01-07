@@ -13,9 +13,9 @@
 ### Self-implement commands
 * `exit`
   * terminate the shell program 
- * `cd`
+* `cd`
   * change directory
- * `history`
+* `history`
   * show all the history since you start this program
 
 ## TODO
