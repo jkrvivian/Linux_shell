@@ -22,3 +22,4 @@
   
 ## TODO
 * I/O redirection bug fix
+* Exception handling 
