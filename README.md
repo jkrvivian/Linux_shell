@@ -10,6 +10,7 @@
 ## Function
 * Support all the commands in `$PATH`
 * Support I/O redirection(`<` `>`) and pipe(`|`)
+
 ### Self-implement commands
 * `exit`
   * terminate the shell program 
