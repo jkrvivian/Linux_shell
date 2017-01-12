@@ -3,7 +3,7 @@
 int main()
 {
 	char tmp;
-	find_history = 0;
+    find_history = 0;
 	head = malloc(sizeof(command));
 	head->next = NULL;
 	head->prev = NULL;
@@ -57,7 +57,7 @@ int cut_cmd(char *tmp)
 int execute_cmd(char *parse_cmd[], int pipe_count)
 {
 	int i, k, j = 0, ret, in = 0, fd[2];
-	int child_status, small, big;
+	int child_status, small, big, redirect_in, redirect_out;
 	char *pipe_cmd[30];
 	pid_t pid;
 	
@@ -70,40 +70,44 @@ int execute_cmd(char *parse_cmd[], int pipe_count)
 		while(parse_cmd[j] && strcmp(parse_cmd[j], "|") != 0) {
 			if(strcmp(parse_cmd[j], "<") == 0) {
 				++small;
-				break;
-			} else if(strcmp(parse_cmd[i], ">") == 0) {
+				redirect_in = open(parse_cmd[++j], O_RDONLY);
+				if(redirect_in == -1) {
+					printf("File not found\n");
+					return ret;
+				} 
+				++j;
+				continue;
+			} else if(strcmp(parse_cmd[j], ">") == 0) {
 				++big;
-				break;
+				redirect_out = open(parse_cmd[++j], O_CREAT | O_WRONLY, 0666);
+				if(redirect_out == -1) {
+					printf("Create file failed\n");
+					return ret;
+				}
+				++j;
+				continue;
 			}
 			pipe_cmd[k++] = parse_cmd[j++];
 		}		
 		pipe_cmd[k] = NULL;
 		++j;
 		
-		/* start execute */
+		/* start execution */
         if ((pid = fork()) == -1)
             exit(EXIT_FAILURE);
         else if (pid == 0) {
-        	/* < */
-        	if(small) {
-        		int fin = open(parse_cmd[j], O_RDONLY);
-        		dup2(fin, in);
-        		close(fin);
-        		int fout = open(parse_cmd[j - 2], O_WRONLY|O_CREAT, 0666);
-        		dup2(fout, fd[1]);
-        		close(fout);
-        		++j;
-        	} else if(big) {  /* > */
-        		int fout = open(parse_cmd[j], O_WRONLY|O_CREAT, 0666);
-        		dup2(fout, fd[1]);
-        		close(fout);
-        		int fin = open(parse_cmd[j - 2], O_RDONLY);
-        		dup2(fin, in);
-        		close(fin);
-        		++j;
-        	}
+			if(small) { 
+				dup2(redirect_in, in);
+				close(redirect_in);
+			}
+			if(big) { 
+				dup2(redirect_out, 1);
+				close(redirect_out);
+				close(fd[1]);
+			}
+
             dup2(in, 0); 			//change the input according to the old one 
-            if (i != pipe_count)
+            if (i != pipe_count && !big)
               dup2(fd[1], 1);
             close(fd[0]);    
                 
