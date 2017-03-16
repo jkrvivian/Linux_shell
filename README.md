@@ -1,4 +1,4 @@
-# Linux_shell
+# Linux shell program
 * A simple implementation of Linux shell
 * A good practice for Linux system call
   (e.g. pipe(), dup2(), execvp()...)
